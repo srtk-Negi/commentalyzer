@@ -6,7 +6,7 @@ import re
 
 load_dotenv()
 api_key = os.getenv('API_KEY')
-max_results = '100'
+max_results = '10'
 
 
 def get_comments(video_id):
@@ -52,8 +52,6 @@ def main():
     video_url = sys.argv[-1]
     video_id = video_url.split("https://youtu.be/")[-1]
     comments = get_comments(video_id)
-
-    print(comments)
 
     with open("comments.txt", "w") as f:
         c = 0

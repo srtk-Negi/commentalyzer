@@ -1,3 +1,4 @@
+from flask import Flask, render_template, url_for, request
 import sys
 import os
 from dotenv import load_dotenv
@@ -7,6 +8,8 @@ import re
 load_dotenv()
 api_key = os.getenv('API_KEY')
 max_results = '100'
+
+app = Flask(__name__)
 
 
 def get_comments(video_id):
@@ -48,26 +51,32 @@ def cleaner(data):
     return (mod_data)
 
 
-def main():
-    video_url = sys.argv[-1]
-    video_id = video_url.split("https://youtu.be/")[-1]
-    comments = get_comments(video_id)
+@app.route('/')
+def home():
+    return render_template("index2.html")
 
-    print(comments)
+
+@app.route('/result', methods=['POST', 'GET'])
+def result():
+    video_url = sys.argv[-1]
+    # video_id = video_url.split("https://youtu.be/")[-1]
+    video_id = "0meTbQQaosU"
+    comments = get_comments(video_id)
 
     with open("comments.txt", "w") as f:
         c = 0
         for comment in comments:
-            f.write(f"Comment #{c}: {comment}\n")
+            f.write(f"{comment}")
             c += 1
 
     with open("comments.txt", "r") as f:
         string = f.read()
         result = cleaner(string)
 
-    with open("forGPT.txt", "w") as f:
+    with open("comments.txt", "w") as f:
         f.write(result)
+    return render_template('index.html', name=result)
 
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    app.run(debug=True)
